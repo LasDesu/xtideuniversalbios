@@ -134,8 +134,8 @@ istruc ROMVARS
 	at	ROMVARS.bIdleTimeout,	db	0						; Standby timer disabled by default
 
 %ifdef MODULE_8BIT_IDE_ADVANCED
-	at	ROMVARS.ideVars0+IDEVARS.wBasePort,				dw	DEVICE_XTIDE_DEFAULT_PORT		; Controller Command Block base port
-	at	ROMVARS.ideVars0+IDEVARS.bDevice,				db	DEVICE_8BIT_XTCF_PIO8
+	at	ROMVARS.ideVars0+IDEVARS.wBasePort,				dw	PRIDE_BIOS_SEGMENT_ADDRESS ;DEVICE_XTIDE_DEFAULT_PORT		; Controller Command Block base port
+	at	ROMVARS.ideVars0+IDEVARS.bDevice,				db	DEVICE_8BIT_PRAKTIK ;DEVICE_8BIT_XTCF_PIO8
 %else
 	at	ROMVARS.ideVars0+IDEVARS.wBasePort,				dw	DEVICE_XTIDE_DEFAULT_PORT		; Controller Command Block base port
 	at	ROMVARS.ideVars0+IDEVARS.wControlBlockPort,		dw	DEVICE_XTIDE_DEFAULT_PORTCTRL	; Controller Control Block base port
@@ -239,6 +239,7 @@ iend
 %ifdef MODULE_8BIT_IDE_ADVANCED
 	%include "JrIdeTransfer.asm"	; Must be included after IdeCommand.asm
 	%include "IdeDmaBlock.asm"
+	%include "PrIdeBlock.asm"
 %endif
 	%include "IdeTransfer.asm"
 	%include "IdePioBlock.asm"

@@ -152,13 +152,13 @@ TARGET = $(BUILD_DIR)/$(PROG)
 #########################
 
 # Make
-MAKE = mingw32-make.exe
+MAKE = make
 
 # Assembler
-AS = nasm.exe
+AS = nasm
 
 # use this command to erase files.
-RM = -del /Q
+RM = rm -rf
 
 
 #############################
@@ -219,7 +219,7 @@ xt_tiny:
 
 strings: src\Strings.asm
 	@$(AS) src\Strings.asm $(ASFLAGS) $(DEFS_AT_LARGE) -DCHECK_FOR_UNUSED_ENTRYPOINTS -DMODULE_STRINGS_COMPRESSED_PRECOMPRESS -o build\Strings.bin -l build\StringsPrecompress.lst
-	@perl ..\tools\StringsCompress.pl < build\StringsPrecompress.lst > src\StringsCompressed.asm
+	@perl ../Tools/StringsCompress.pl < build\StringsPrecompress.lst > src\StringsCompressed.asm
 	@echo StringsCompressed.asm updated!
 
 clean:
@@ -227,35 +227,35 @@ clean:
 	@echo Deleted "(*.*)" from "$(BUILD_DIR)/"
 
 checksum: all
-	@perl ..\tools\checksum.pl $(TARGET)_tiny.bin $(ROMSIZE)
-	@perl ..\tools\checksum.pl $(TARGET)_xt.bin $(ROMSIZE)
-	@perl ..\tools\checksum.pl $(TARGET)_xtp.bin $(ROMSIZE)
-	@perl ..\tools\checksum.pl $(TARGET)_at.bin $(ROMSIZE)
-	@perl ..\tools\checksum.pl $(TARGET)_xtl.bin $(ROMSIZE_LARGE)
-	@perl ..\tools\checksum.pl $(TARGET)_xtpl.bin $(ROMSIZE_LARGE)
-	@perl ..\tools\checksum.pl $(TARGET)_atl.bin $(ROMSIZE_LARGE)
-	@perl ..\tools\checksum.pl $(TARGET)_386.bin $(ROMSIZE)
+	@perl ../Tools/checksum.pl $(TARGET)_tiny.bin $(ROMSIZE)
+	@perl ../Tools/checksum.pl $(TARGET)_xt.bin $(ROMSIZE)
+	@perl ../Tools/checksum.pl $(TARGET)_xtp.bin $(ROMSIZE)
+	@perl ../Tools/checksum.pl $(TARGET)_at.bin $(ROMSIZE)
+	@perl ../Tools/checksum.pl $(TARGET)_xtl.bin $(ROMSIZE_LARGE)
+	@perl ../Tools/checksum.pl $(TARGET)_xtpl.bin $(ROMSIZE_LARGE)
+	@perl ../Tools/checksum.pl $(TARGET)_atl.bin $(ROMSIZE_LARGE)
+	@perl ../Tools/checksum.pl $(TARGET)_386.bin $(ROMSIZE)
 
 unused:
 	@echo "All Features"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_ALL_FEATURES) $(DEFS_XT) $(DEFS_XT_PLUS) $(DEFS_AT) $(DEFS_XT_LARGE) $(DEFS_XTPLUS_LARGE) $(DEFS_AT_LARGE) $(DEFS_XT_TINY) $(DEFS_386_8K) -o"$(TARGET)_unused.asm" -l"$(TARGET)_unused.lst"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_ALL_FEATURES) $(DEFS_XT) $(DEFS_XT_PLUS) $(DEFS_AT) $(DEFS_XT_LARGE) $(DEFS_XTPLUS_LARGE) $(DEFS_AT_LARGE) $(DEFS_XT_TINY) $(DEFS_386_8K) -o"$(TARGET)_unused.asm" -E -DCHECK_FOR_UNUSED_ENTRYPOINTS
-	@perl ..\tools\unused.pl $(TARGET)_unused.lst $(TARGET)_unused.asm
+	@perl ../Tools/unused.pl $(TARGET)_unused.lst $(TARGET)_unused.asm
 	@echo "XT Small"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_XT) -o"$(TARGET)_unused_xt.asm" -l"$(TARGET)_unused_xt.lst"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_XT) -o"$(TARGET)_unused_xt.asm" -E -DCHECK_FOR_UNUSED_ENTRYPOINTS
-	@perl ..\tools\unused.pl $(TARGET)_unused_xt.lst $(TARGET)_unused_xt.asm
+	@perl ../Tools/unused.pl $(TARGET)_unused_xt.lst $(TARGET)_unused_xt.asm
 	@echo "XT Large"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_XT_LARGE) -o"$(TARGET)_unused_xtl.asm" -l"$(TARGET)_unused_xtl.lst"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_XT_LARGE) -o"$(TARGET)_unused_xtl.asm" -E -DCHECK_FOR_UNUSED_ENTRYPOINTS
-	@perl ..\tools\unused.pl $(TARGET)_unused_xtl.lst $(TARGET)_unused_xtl.asm
+	@perl ../Tools/unused.pl $(TARGET)_unused_xtl.lst $(TARGET)_unused_xtl.asm
 	@echo "AT Small"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_AT) -o"$(TARGET)_unused_at.asm" -l"$(TARGET)_unused_at.lst"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_AT) -o"$(TARGET)_unused_at.asm" -E -DCHECK_FOR_UNUSED_ENTRYPOINTS
-	@perl ..\tools\unused.pl $(TARGET)_unused_at.lst $(TARGET)_unused_at.asm
+	@perl ../Tools/unused.pl $(TARGET)_unused_at.lst $(TARGET)_unused_at.asm
 	@echo "AT Large"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_AT_LARGE) -o"$(TARGET)_unused_atl.asm" -l"$(TARGET)_unused_atl.lst"
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_AT_LARGE) -o"$(TARGET)_unused_atl.asm" -E -DCHECK_FOR_UNUSED_ENTRYPOINTS
-	@perl ..\tools\unused.pl $(TARGET)_unused_atl.lst $(TARGET)_unused_atl.asm
+	@perl ../Tools/unused.pl $(TARGET)_unused_atl.lst $(TARGET)_unused_atl.asm
 
 

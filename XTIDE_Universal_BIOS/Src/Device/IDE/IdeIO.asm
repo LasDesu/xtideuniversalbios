@@ -64,9 +64,13 @@ IdeIO_InputToALfromIdeRegisterInDL:
 	cmp		al, DEVICE_8BIT_JRIDE_ISA
 	jb		SHORT .InputToALfromRegisterInDX	; All XT-CF modes
 	mov		bh, JRIDE_COMMAND_BLOCK_REGISTER_WINDOW_OFFSET >> 8
-	je		SHORT .InputToALfromMemoryMappedRegisterInBX
+	je		SHORT .InputToALfromMemoryMappedRegisterInBX	; JR-IDE
+	; ADP50L, use shifted address
 	mov		bl, dl
 	mov		bh, ADP50L_COMMAND_BLOCK_REGISTER_WINDOW_OFFSET >> 8
+	cmp		al, DEVICE_8BIT_PRAKTIK
+	jb		SHORT .InputToALfromMemoryMappedRegisterInBX	; ADP50L
+	mov		bh, PRIDE_REGISTER_WINDOW_OFFSET >> 8
 
 .InputToALfromMemoryMappedRegisterInBX:
 	push	ds
@@ -112,7 +116,7 @@ IdeIO_OutputALtoIdeControlBlockRegisterInDL:
 	cmp		bl, DEVICE_8BIT_JRIDE_ISA
 	jb		SHORT IdeIO_OutputALtoIdeRegisterInDL.ShlRegisterIndexInDXandOutputAL	; All XT-CF modes
 	mov		bx, JRIDE_CONTROL_BLOCK_REGISTER_WINDOW_OFFSET - 8			; Zeroes BL. -8 compensates for the ADD
-	je		SHORT IdeIO_OutputALtoIdeRegisterInDL.OutputALtoMemoryMappedRegisterInDXwithWindowOffsetInBX
+	je		SHORT IdeIO_OutputALtoIdeRegisterInDL.OutputALtoMemoryMappedRegisterInDXwithWindowOffsetInBX	; JR-IDE
 	; The commented instructions below shows what happens next (saved for clarity) but as an optimization
 	; we can accomplish the same thing with this jump.
 	jmp		SHORT IdeIO_OutputALtoIdeRegisterInDL.ShlDXandMovHighByteOfADP50LoffsetsToBH
@@ -167,7 +171,11 @@ IdeIO_OutputALtoIdeRegisterInDL:
 	je		SHORT .OutputALtoMemoryMappedRegisterInDXwithWindowOffsetInBX
 .ShlDXandMovHighByteOfADP50LoffsetsToBH:
 	eSHL_IM	dx, 1
-	mov		bh, ADP50L_COMMAND_BLOCK_REGISTER_WINDOW_OFFSET >> 8	; BL is zero so we only need to change BH
+	mov		bl, [di+DPT_ATA.bDevice]
+	cmp		bl, DEVICE_8BIT_PRAKTIK
+	mov		bx, ADP50L_COMMAND_BLOCK_REGISTER_WINDOW_OFFSET	; BL is zero so we only need to change BH
+	jb		SHORT .OutputALtoMemoryMappedRegisterInDXwithWindowOffsetInBX	; ADP50L
+	mov		bx, PRIDE_REGISTER_WINDOW_OFFSET
 
 .OutputALtoMemoryMappedRegisterInDXwithWindowOffsetInBX:
 	add		bx, dx

@@ -93,8 +93,8 @@ IdeCommand_IdentifyDeviceToBufferInESSIwithDriveSelectByteInBH:
 	; Enable 8-bit PIO for DEVICE_8BIT_ATA (no need to verify device type here)
 	call	AH9h_Enable8bitModeForDevice8bitAta
 
-	; Set XT-CF mode. No need to check here if device is XT-CF or not.
 %ifdef MODULE_8BIT_IDE_ADVANCED
+	; Set XT-CF mode. No need to check here if device is XT-CF or not.
 	call	AH1Eh_GetCurrentXTCFmodeToAX	; Reads from DPT_ATA.bDevice that we just stored
 	call	AH9h_SetModeFromALtoXTCF		; Enables/disables 8-bit mode when necessary
 %endif ; MODULE_8BIT_IDE_ADVANCED
@@ -176,6 +176,8 @@ IdeCommand_OutputWithParameters:
 	cmp		bl, FLG_STATUS_DRQ				; Data transfer started?
 	jne		SHORT .WaitUntilNonTransferCommandCompletes
 %ifdef MODULE_8BIT_IDE_ADVANCED
+	cmp		BYTE [di+DPT_ATA.bDevice], DEVICE_8BIT_PRAKTIK
+	je		IdeTransfer_StartWithCommandInAL
 	cmp		BYTE [di+DPT_ATA.bDevice], DEVICE_8BIT_JRIDE_ISA
 	jae		SHORT JrIdeTransfer_StartWithCommandInAL	; DEVICE_8BIT_JRIDE_ISA or DEVICE_8BIT_ADP50L
 %endif

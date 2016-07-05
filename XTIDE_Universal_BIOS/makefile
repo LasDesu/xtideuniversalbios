@@ -116,6 +116,8 @@ DEFINES_AT_LARGE = $(DEFINES_AT) $(DEFINES_COMMON_LARGE)
 DEFINES_XT_TINY = MODULE_STRINGS_COMPRESSED MODULE_8BIT_IDE NO_ATAID_VALIDATION
 DEFINES_386_8K = $(DEFINES_AT) USE_386
 
+DEFINES_PRAKTIK = $(DEFINES_XT_LARGE) MODULE_PRAKTIK_HACKS
+
 DEFINES_ALL_FEATURES = MODULE_8BIT_IDE MODULE_8BIT_IDE_ADVANCED MODULE_ADVANCED_ATA MODULE_EBIOS MODULE_BOOT_MENU MODULE_HOTKEYS MODULE_IRQ MODULE_SERIAL MODULE_SERIAL_FLOPPY MODULE_STRINGS_COMPRESSED MODULE_POWER_MANAGEMENT MODULE_COMPATIBLE_TABLES
 DEFINES_ALL_FEATURES += ELIMINATE_CGA_SNOW RELOCATE_INT13H_STACK RESERVE_DIAGNOSTIC_CYLINDER
 
@@ -139,6 +141,7 @@ DEFS_XTPLUS_LARGE = $(DEFINES_XTPLUS_LARGE:%=-D%) -DBIOS_SIZE=$(BIOS_SIZE_LARGE)
 DEFS_AT_LARGE = $(DEFINES_AT_LARGE:%=-D%) -DBIOS_SIZE=$(BIOS_SIZE_LARGE)
 DEFS_XT_TINY = $(DEFINES_XT_TINY:%=-D%) -DBIOS_SIZE=$(BIOS_SIZE)
 DEFS_386_8K = $(DEFINES_386_8K:%=-D%) -DBIOS_SIZE=$(BIOS_SIZE)
+DEFS_PRAKTIK = $(DEFINES_PRAKTIK:%=-D%) -DBIOS_SIZE=$(BIOS_SIZE_LARGE)
 DEFS_ALL_FEATURES = $(DEFINES_ALL_FEATURES:%=-D%)
 
 # Add -I in front of all header directories
@@ -182,7 +185,7 @@ all: clean small large
 small: xt_tiny xt xtplus at 386_8k
 	@echo All small binaries built!
 
-large: xt_large xtplus_large at_large
+large: xt_large xtplus_large at_large xt_prakt
 	@echo All large binaries built!
 
 at:
@@ -216,6 +219,10 @@ xt_tiny:
 386_8k:
 	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_386_8K) -l"$(TARGET)_386.lst" -o"$(TARGET)_386.bin"
 	@echo * Small 386 version "$(TARGET)_386.bin" built.
+	
+xt_prakt:
+	@$(AS) "$(SRC_ASM)" $(ASFLAGS) $(DEFS_PRAKTIK) -l"$(TARGET)_prakt.lst" -o"$(TARGET)_prakt.bin"
+	@echo * Praktik XT version "$(TARGET)_prakt.bin" built.
 
 strings: src\Strings.asm
 	@$(AS) src\Strings.asm $(ASFLAGS) $(DEFS_AT_LARGE) -DCHECK_FOR_UNUSED_ENTRYPOINTS -DMODULE_STRINGS_COMPRESSED_PRECOMPRESS -o build\Strings.bin -l build\StringsPrecompress.lst
@@ -235,6 +242,7 @@ checksum: all
 	@perl ../Tools/checksum.pl $(TARGET)_xtpl.bin $(ROMSIZE_LARGE)
 	@perl ../Tools/checksum.pl $(TARGET)_atl.bin $(ROMSIZE_LARGE)
 	@perl ../Tools/checksum.pl $(TARGET)_386.bin $(ROMSIZE)
+	@perl ../Tools/checksum.pl $(TARGET)_prakt.bin $(ROMSIZE_LARGE)
 
 unused:
 	@echo "All Features"

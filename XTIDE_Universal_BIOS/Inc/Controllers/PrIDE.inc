@@ -19,21 +19,9 @@
 %ifndef PRIDE_INC
 %define PRIDE_INC
 
-; | BIOS Segment --------- | Unknown - | ROM Chip ---------- |
-;	Jumper:		J1	J2	J3	J4	J5	J6	J7
-;	Disabled	N/A	N/A	OFF	OFF	OFF	OFF	OFF	= 2764 / 27C64 *
-;	C800h *		OFF	OFF	ON				ON	= 27256 / 27C256
-;	CA00h		ON	OFF	ON
-;	CC00h		OFF	ON	ON
-;	CE00h		ON	ON	ON
-;
-; * Defaults
-; Unknown = "Factory configured - do not alter"
-; Bits 11...9 of the segment address corresponds to jumpers J3...J1.
-
 PRIDE_BIOS_SEGMENT_ADDRESS		EQU		0F000h	; Default
 
 ; Offsets from BIOS segment address
-PRIDE_REGISTER_WINDOW_OFFSET	EQU	0C00h
+PRIDE_REGISTER_WINDOW_OFFSET	EQU		0C00h
 
 %endif ; PRIDE_INC

@@ -25,6 +25,11 @@
 	%endif
 %endif
 
+%ifdef MODULE_PRAKTIK_HACKS
+	%ifndef RELOCATE_INT13H_STACK
+		;%define RELOCATE_INT13H_STACK
+	%endif
+%endif
 
 %ifdef MODULE_SERIAL_FLOPPY
 	%ifndef MODULE_SERIAL
@@ -38,6 +43,9 @@
 	%include "XTCF.inc"				; For Lo-tech XT-CF
 	%include "JRIDE_ISA.inc"		; For JR-IDE/ISA
 	%include "ADP50L.inc"			; For SVC ADP50L
+%endif
+
+%ifdef MODULE_PRAKTIK_IDE
 	%include "PrIDE.inc"			; For Praktik's IDE
 %endif
 

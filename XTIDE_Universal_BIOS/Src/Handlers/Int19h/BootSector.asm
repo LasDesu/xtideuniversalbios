@@ -60,7 +60,7 @@ BootSector_TryToLoadFromDriveDL_AndBoot:
 	jb		SHORT .SkipHardDrivesAndDD
 	push	ds
 	LOAD_BDA_SEGMENT_TO     ds, di
-	or		BYTE [BDA.bFDRecal], 30h	; mark as 2DD disk
+	or		BYTE [43Eh], 30h	; mark as 2DD disk
 	pop		ds
 	;; fall through to SkipHardDrivesAndDD
 .SkipHardDrivesAndDD:

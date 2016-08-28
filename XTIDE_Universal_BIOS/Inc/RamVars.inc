@@ -36,7 +36,7 @@
 ; at the top of interrupt vectors.
 struc RAMVARS
 %ifdef RELOCATE_INT13H_STACK
-							resb	252
+							resb	(256-4)
 	.dwStackChangeDSDI:
 	.wStackChangeDI			resb	2	; Used during stack
 	.wStackChangeDS			resb	2	; switching only

@@ -54,8 +54,14 @@ Int13h_DiskFunctionsHandlerWithStackChange:
 
 	; Load new stack and restore DS and DI
 	mov		di, ds		; We can save 2 bytes by using PUSH/POP but it's slower
+%ifndef USE_286
+	cli
+%endif
 	mov		ss, di		; No need to wrap with CLI/STI since this is for AT only (286+)
 	mov		sp, RAMVARS.rgbTopOfStack-4
+%ifndef USE_286
+	sti
+%endif
 	pop		di			; DI before stack change
 	pop		ds			; DS before stack change
 

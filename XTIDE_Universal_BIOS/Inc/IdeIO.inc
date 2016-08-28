@@ -34,14 +34,26 @@
 ;		BX, DX
 ;--------------------------------------------------------------------
 %macro OUTPUT_AL_TO_IDE_REGISTER 1
-%ifndef MODULE_8BIT_IDE	; Standard IDE controllers only
+%ifdef MODULE_PRAKTIK_IDE
+	
+	%ifnidni %1, bx
+		mov		bx, %1
+	%endif
+	eSHL_IM	bx, 1
+	add		bx, PRIDE_REGISTER_WINDOW_OFFSET
+	push	ds
+	mov		ds, [di+DPT.wBasePort]	; Segment for PrIDE
+	mov		[bx], al
+	pop		ds
+
+%elifndef MODULE_8BIT_IDE	; Standard IDE controllers only
 
 	%ifnidni %1, dx
 		mov		dx, %1
 	%endif
 	add		dx, [di+DPT.wBasePort]
 	out		dx, al
-
+	
 %else	; Register translations required
 
 	%ifnidni %1, dl
@@ -54,7 +66,20 @@
 
 
 %macro OUTPUT_AL_TO_IDE_CONTROL_BLOCK_REGISTER 1
-%ifndef MODULE_8BIT_IDE	; Standard IDE controllers only
+%ifdef MODULE_PRAKTIK_IDE
+	
+	%ifnidni %1, bx
+		mov		bx, %1
+	%endif
+	eSHL_IM	bx, 1
+	or		bx, 10h
+	add		bx, PRIDE_REGISTER_WINDOW_OFFSET
+	push	ds
+	mov		ds, [di+DPT.wBasePort]	; Segment for PrIDE
+	mov		[bx], al
+	pop		ds
+	
+%elifndef MODULE_8BIT_IDE	; Standard IDE controllers only
 
 	%ifnidni %1, dx
 		mov		dx, %1
@@ -85,7 +110,19 @@
 ;		BX, DX
 ;--------------------------------------------------------------------
 %macro INPUT_TO_AL_FROM_IDE_REGISTER 1
-%ifndef MODULE_8BIT_IDE	; Standard IDE controllers only
+%ifdef MODULE_PRAKTIK_IDE
+	
+	%ifnidni %1, bx
+		mov		bx, %1
+	%endif
+	eSHL_IM	bx, 1
+	add		bx, PRIDE_REGISTER_WINDOW_OFFSET
+	push	ds
+	mov		ds, [di+DPT.wBasePort]	; Segment for PrIDE
+	mov		al, [bx]
+	pop		ds
+	
+%elifndef MODULE_8BIT_IDE	; Standard IDE controllers only
 
 	%ifnidni %1, dx
 		mov		dx, %1

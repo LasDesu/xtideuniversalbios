@@ -222,8 +222,10 @@ InitializePiovarsInSSBPwithSectorCountInAH:
 	mov		[bp+PIOVARS.bSectorsDone], ah		; Zero
 
 	; Get transfer function based on bus type
+%ifndef MODULE_PRAKTIK_IDE
 	mov		al, [di+DPT_ATA.bDevice]
 	add		bx, ax
+%endif
 %ifdef MODULE_8BIT_IDE_ADVANCED
 	cmp		al, DEVICE_8BIT_XTCF_DMA
 %endif
@@ -343,6 +345,9 @@ IdeTransfer_NormalizePointerInESSI:
 ; Lookup tables to get transfer function based on bus type
 ALIGN WORD_ALIGN
 g_rgfnPioRead:
+%ifdef MODULE_PRAKTIK_IDE
+		dw		IdePioBlock_ReadFromPrIDE			; DEVICE_8BIT_PRAKTIK
+%else
 		dw		IdePioBlock_ReadFrom16bitDataPort	; 0, DEVICE_16BIT_ATA
 		dw		IdePioBlock_ReadFrom32bitDataPort	; 1, DEVICE_32BIT_ATA
 %ifdef MODULE_8BIT_IDE
@@ -354,13 +359,14 @@ g_rgfnPioRead:
 		dw		IdePioBlock_ReadFrom16bitDataPort	; 6, DEVICE_8BIT_XTCF_PIO8_WITH_BIU_OFFLOAD
 		dw		IdePioBlock_ReadFrom16bitDataPort	; 7, DEVICE_8BIT_XTCF_PIO16_WITH_BIU_OFFLOAD
 		dw		IdeDmaBlock_ReadFromXTCF			; 8, DEVICE_8BIT_XTCF_DMA
-		dw		0, 0 ; 9, 10
-		dw		IdePioBlock_ReadFromPrIDE			; 11, DEVICE_8BIT_PRAKTIK
 %endif ; MODULE_8BIT_IDE_ADVANCED
 %endif ; MODULE_8BIT_IDE
-
+%endif
 
 g_rgfnPioWrite:
+%ifdef MODULE_PRAKTIK_IDE
+		dw		IdePioBlock_WriteToPrIDE			; DEVICE_8BIT_PRAKTIK
+%else
 		dw		IdePioBlock_WriteTo16bitDataPort	; 0, DEVICE_16BIT_ATA
 		dw		IdePioBlock_WriteTo32bitDataPort	; 1, DEVICE_32BIT_ATA
 %ifdef MODULE_8BIT_IDE
@@ -372,7 +378,6 @@ g_rgfnPioWrite:
 		dw		IdePioBlock_WriteTo16bitDataPort	; 6, DEVICE_8BIT_XTCF_PIO8_WITH_BIU_OFFLOAD
 		dw		IdePioBlock_WriteTo16bitDataPort	; 7, DEVICE_8BIT_XTCF_PIO16_WITH_BIU_OFFLOAD
 		dw		IdeDmaBlock_WriteToXTCF				; 8, DEVICE_8BIT_XTCF_DMA
-		dw		0, 0 ; 9, 10
-		dw		IdePioBlock_WriteToPrIDE			; 11, DEVICE_8BIT_PRAKTIK
 %endif ; MODULE_8BIT_IDE_ADVANCED
 %endif ; MODULE_8BIT_IDE
+%endif

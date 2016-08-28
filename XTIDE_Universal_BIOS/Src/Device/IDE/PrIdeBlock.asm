@@ -23,18 +23,20 @@ SECTION .text
 ALIGN JUMP_ALIGN
 IdePioBlock_ReadFromPrIDE:
 	UNROLL_SECTORS_IN_CX_TO_OWORDS
-	mov		bx, PRIDE_REGISTER_WINDOW_OFFSET
+	push 	si
+	mov		si, PRIDE_REGISTER_WINDOW_OFFSET
 	push	ds
 	mov		ds, dx	; Segment for JR-IDE/ISA and ADP50L
 ALIGN JUMP_ALIGN
 .InswLoop:
-	%rep 8	; WORDs
-	mov		al, [bx + 0]
-	mov		ah, [bx + 1]
-	stosw						; Store word to [ES:DI]
+	%rep 8	; WORDs	
+	movsw	; Move word from [DS:SI] to [ES:DI]
+	dec		si
+	dec		si
 	%endrep
 	loop	.InswLoop
-	pop	ds
+	pop		ds
+	pop		si
 	ret
 	
 
@@ -58,20 +60,20 @@ ALIGN JUMP_ALIGN
 ALIGN JUMP_ALIGN
 IdePioBlock_WriteToPrIDE:
 	push	ds
-	UNROLL_SECTORS_IN_CX_TO_QWORDS
 	push	es
 	pop		ds
-	mov		bx, PRIDE_REGISTER_WINDOW_OFFSET
+	UNROLL_SECTORS_IN_CX_TO_QWORDS
+	push	di
+	mov		di, PRIDE_REGISTER_WINDOW_OFFSET
 	mov		es, dx	; Segment for JR-IDE/ISA and ADP50L
 ALIGN JUMP_ALIGN
 .OutswLoop:
 	%rep 4	; WORDs
-	lodsw						; Load word from [DS:SI]
-	mov		[es:bx + 1], ah
-	mov		[es:bx + 0], al
+	movsw	; Move word from [DS:SI] to [ES:DI]
+	dec		di
+	dec		di
 	%endrep
 	loop	.OutswLoop
-	push	ds
-	pop		es
+	pop		di
 	pop		ds
 	ret

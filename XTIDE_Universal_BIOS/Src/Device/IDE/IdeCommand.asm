@@ -176,8 +176,6 @@ IdeCommand_OutputWithParameters:
 	cmp		bl, FLG_STATUS_DRQ				; Data transfer started?
 	jne		SHORT .WaitUntilNonTransferCommandCompletes
 %ifdef MODULE_8BIT_IDE_ADVANCED
-	cmp		BYTE [di+DPT_ATA.bDevice], DEVICE_8BIT_PRAKTIK
-	je		IdeTransfer_StartWithCommandInAL
 	cmp		BYTE [di+DPT_ATA.bDevice], DEVICE_8BIT_JRIDE_ISA
 	jae		SHORT JrIdeTransfer_StartWithCommandInAL	; DEVICE_8BIT_JRIDE_ISA or DEVICE_8BIT_ADP50L
 %endif

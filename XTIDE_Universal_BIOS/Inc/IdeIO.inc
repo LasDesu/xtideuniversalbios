@@ -72,7 +72,7 @@
 		mov		bx, %1
 	%endif
 	eSHL_IM	bx, 1
-	or		bx, 10h
+	or		bl, 10h
 	add		bx, PRIDE_REGISTER_WINDOW_OFFSET
 	push	ds
 	mov		ds, [di+DPT.wBasePort]	; Segment for PrIDE

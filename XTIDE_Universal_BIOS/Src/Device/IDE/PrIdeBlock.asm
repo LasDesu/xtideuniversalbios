@@ -60,12 +60,12 @@ ALIGN JUMP_ALIGN
 ALIGN JUMP_ALIGN
 IdePioBlock_WriteToPrIDE:
 	push	ds
-	push	es
-	pop		ds
+	push	es	; from ES
+	pop		ds	; to DS
 	UNROLL_SECTORS_IN_CX_TO_QWORDS
 	push	di
 	mov		di, PRIDE_REGISTER_WINDOW_OFFSET
-	mov		es, dx	; Segment for JR-IDE/ISA and ADP50L
+	mov		es, dx	; Segment for PrIDE
 ALIGN JUMP_ALIGN
 .OutswLoop:
 	%rep 4	; WORDs

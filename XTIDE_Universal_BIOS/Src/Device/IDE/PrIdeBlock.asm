@@ -29,7 +29,7 @@ IdePioBlock_ReadFromPrIDE:
 	mov		ds, dx	; Segment for JR-IDE/ISA and ADP50L
 ALIGN JUMP_ALIGN
 .InswLoop:
-	%rep 8	; WORDs	
+	%rep 8	; OWORDs
 	movsw	; Move word from [DS:SI] to [ES:DI]
 	dec		si
 	dec		si
@@ -64,16 +64,18 @@ IdePioBlock_WriteToPrIDE:
 	pop		ds	; to DS
 	UNROLL_SECTORS_IN_CX_TO_QWORDS
 	push	di
+	push	es
 	mov		di, PRIDE_REGISTER_WINDOW_OFFSET
 	mov		es, dx	; Segment for PrIDE
 ALIGN JUMP_ALIGN
 .OutswLoop:
-	%rep 4	; WORDs
+	%rep 4	; QWORDs
 	movsw	; Move word from [DS:SI] to [ES:DI]
 	dec		di
 	dec		di
 	%endrep
 	loop	.OutswLoop
+	pop		es
 	pop		di
 	pop		ds
 	ret

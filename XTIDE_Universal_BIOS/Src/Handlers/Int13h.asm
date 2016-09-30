@@ -177,6 +177,19 @@ Int13h_DirectCallToAnotherBios:
 	call	DriveXlate_Reset			; No translation
 %endif
 
+%ifdef MODULE_PRAKTIK_HACKS
+	and		BYTE [RAMVARS.bUpdateDriveParams], 0
+	cmp		ah, 02h	; check for reading
+	jne		.NoBootSectorCheck
+	cmp		cx, 0001h ; check track and sector
+	jne		.NoBootSectorCheck
+	cmp		dx, 0001h ; check head and drive
+	ja		.NoBootSectorCheck
+	inc		BYTE [RAMVARS.bUpdateDriveParams]
+	add		[RAMVARS.bUpdateDriveParams], dl
+.NoBootSectorCheck:
+%endif
+
 	push	bp							; Store offset to IDEPACK (SS:SP now points it)
 
 	; Simulate INT by pushing flags and return address
@@ -236,6 +249,10 @@ Int13h_DirectCallToAnotherBios:
 	pushf
 	pop		WORD [bp+IDEPACK.intpack+INTPACK.flags]
 	call	RamVars_GetSegmentToDS
+	
+%ifdef MODULE_PRAKTIK_HACKS
+	call	Praktik_UpdateDriveParams
+%endif
 
 %ifdef MODULE_DRIVEXLATE
 	; Restore drive number translation back to what it was
@@ -325,7 +342,6 @@ Int13h_CallPreviousInt13hHandler:
 	call far [RAMVARS.fpOldI13h]
 	ret
 
-
 ;--------------------------------------------------------------------
 ; Int13h_SetErrorCodeToBdaAndToIntpackInSSBPfromAH_ALHasDriveNumber
 ; Int13h_SetErrorCodeToBdaAndToIntpackInSSBPfromAH
@@ -370,6 +386,37 @@ Int13h_SetErrorCodeToIntpackInSSBPfromAH:
 	or		BYTE [bp+IDEPACK.intpack+INTPACK.flags], FLG_FLAGS_CF
 	ret
 
+ALIGN JUMP_ALIGN
+%ifdef MODULE_PRAKTIK_HACKS
+Praktik_UpdateDriveParams:
+	pushf
+	mov		cl, [RAMVARS.bUpdateDriveParams]
+	test	cl, cl
+	je		.SkipCheck
+	
+	push	ax
+	push	ds
+	LOAD_BDA_SEGMENT_TO	ds, ax
+	
+	mov		ah, 08h
+	rol		ah, cl
+	
+	cmp		WORD [es:bx+13h], 5A0h	; check if we have 2DD DOS disk
+	jb		SHORT .DDFloppy
+	or		BYTE [43Eh], ah		; mark as 80 track disk
+	jmp		SHORT .RestoreRegs
+.DDFloppy:
+	xor		ah, 0ffh
+	and		BYTE [43Eh], ah		; mark as 40 track disk
+	
+.RestoreRegs:
+	pop		ds
+	pop		ax
+	
+.SkipCheck:
+	popf
+	ret
+%endif
 
 ; Jump table for correct BIOS function
 ALIGN WORD_ALIGN

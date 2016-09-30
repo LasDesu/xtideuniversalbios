@@ -53,18 +53,6 @@ BootSector_TryToLoadFromDriveDL_AndBoot:
 
 
 .FirstSectorLoadedToESBX:
-%ifdef MODULE_PRAKTIK_HACKS
-	cmp		dl, 80h
-	jae		SHORT .SkipHardDrivesAndDD
-	cmp		WORD [es:bx+13h], 5A0h	; check if we have 2DD DOS disk
-	jb		SHORT .SkipHardDrivesAndDD
-	push	ds
-	LOAD_BDA_SEGMENT_TO     ds, di
-	or		BYTE [43Eh], 30h	; mark as 2DD disk
-	pop		ds
-	;; fall through to SkipHardDrivesAndDD
-.SkipHardDrivesAndDD:
-%endif
 	test	dl, dl
 	jns		SHORT .AlwaysBootFromFloppyDriveForBooterGames
 	cmp		WORD [es:bx+510], 0AA55h		; Valid boot sector?

@@ -25,12 +25,6 @@
 	%endif
 %endif
 
-%ifdef MODULE_PRAKTIK_HACKS
-	%ifndef RELOCATE_INT13H_STACK
-		;%define RELOCATE_INT13H_STACK
-	%endif
-%endif
-
 %ifdef MODULE_SERIAL_FLOPPY
 	%ifndef MODULE_SERIAL
 		%define MODULE_SERIAL

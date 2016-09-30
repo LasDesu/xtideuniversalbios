@@ -59,6 +59,10 @@ struc RAMVARS
 %ifdef NEED_XLATEVARS
 	.xlateVars				resb	XLATEVARS_size
 %endif
+
+%ifdef MODULE_PRAKTIK_HACKS
+	.bUpdateDriveParams		resb	1
+%endif
 endstruc
 
 ; Note!!! .wDrvDetectSignature and .wSignature are intentionally in different locations.

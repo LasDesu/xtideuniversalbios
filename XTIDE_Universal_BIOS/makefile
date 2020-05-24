@@ -182,10 +182,10 @@ ASFLAGS += -Ox					# Optimize operands to their shortest forms
 all: clean small large
 	@echo All done!
 
-small: xt_tiny xt xtplus at 386_8k
+small: xt_tiny xt xtplus at 386_8k xt_prakt
 	@echo All small binaries built!
 
-large: xt_large xtplus_large at_large xt_prakt
+large: xt_large xtplus_large at_large
 	@echo All large binaries built!
 
 at:
@@ -242,7 +242,7 @@ checksum: all
 	@perl ../Tools/checksum.pl $(TARGET)_xtpl.bin $(ROMSIZE_LARGE)
 	@perl ../Tools/checksum.pl $(TARGET)_atl.bin $(ROMSIZE_LARGE)
 	@perl ../Tools/checksum.pl $(TARGET)_386.bin $(ROMSIZE)
-	@perl ../Tools/checksum.pl $(TARGET)_prakt.bin $(ROMSIZE_LARGE)
+	@perl ../Tools/checksum.pl $(TARGET)_prakt.bin $(ROMSIZE)
 
 unused:
 	@echo "All Features"
